@@ -1,0 +1,205 @@
+﻿{% load staticfiles %}
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link rel="stylesheet" href="{% static 'shopping/css/bootstrap.css' %}">
+    <script src="{% static 'shopping/js/angular-ui-router.min.js' %}"></script>
+    <script src="{% static 'shopping/js/angular.min.js' %}"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            background-size: 100% 100%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            table tr th {
+                text-align: center;
+            }
+
+                table tr th:nth-child(3) {
+                    text-align: left;
+                }
+
+            table tr {
+                height: 40px;
+                border-bottom: 1px solid #d4d4d7;
+            }
+
+                table tr td:last-child button {
+                    width: 30%;
+                    height: 80%;
+                    background: #C9302C;
+                    border-radius: 5px;
+                    border: 0px;
+                    color: #fff;
+                    outline: none;
+                }
+
+                table tr td {
+                    text-align: center;
+                    color: #151515;
+                    font-family: "微软雅黑";
+                    /*border: 1px solid #d4d4d7;*/
+                    padding-left: 5px;
+                    font-size: 13px;
+                    height: 30px;
+                }
+
+                    table tr td:nth-child(2) img {
+                        height: 100%;
+                    }
+
+                    table tr td:nth-child(3) {
+                        text-align: left;
+                    }
+
+                table tr:nth-child(even) {
+                    background: #f4f4f4;
+                }
+
+                table tr td:nth-child(4) button {
+                    width: 25px;
+                    background: #C9302C;
+                    border: 1px solid #C9302C;
+                    color: #fff;
+                    height: 70%;
+                }
+
+                table tr td:nth-child(4) input {
+                    width: 60px;
+                    height: 69%;
+                    border: 1px solid #D4D4D7;
+                    margin: 0px 5px;
+                    text-align: center;
+                }
+
+        .fcred {
+            background: #EBEBE4 !important;
+        }
+    </style>
+</head>
+<body ng-app="app" ng-controller="cont">
+    <div style="margin-left:auto; margin-right:auto; width:600px; padding-top:30px">
+        <a>user: {{ user.username }}</a>
+        <div id="search-form" class="search-form">
+            <form role="search" method="get" id="searchform" action="{% url "user:search" pk=user.pk %}">
+                <input type="search" name="q" placeholder="搜索" required>
+                <button type="submit"><span class="ion-ios-search-strong">搜索</span></button>
+            </form>
+        </div>
+    </div>
+    <table>
+        <tr>
+            <th>产品编号</th>
+            <th>产品展示</th>
+            <th>产品名称</th>
+            <th></th>
+            <th>产品单价</th>
+            <th></th>
+            <th>操作</th>
+        </tr>
+        {% for commodity in commodities %}
+            <tr ng-repeat="item in td |filter:abc" ng-class="{'fcred':item.math==0}">
+                <td>{{ commodity.id }}</td>
+                <td><img src="{{ commodity.img }}"></td>
+                <td>{{ commodity.name }}</td>
+                <td></td>
+{#                <td>#}
+{#                    <button onclick="jian({{ commodity.id }},{{ commodity.price }})">-</button>#}
+{#                    <input title="" id={{ commodity.id }} type="text" disabled="disabled" value=1>#}
+{#                    <button onclick="jia({{ commodity.id }},{{ commodity.price }})">+</button>#}
+{#                </td>#}
+                <td>{{ commodity.price }} 元</td>
+{#                <td id={{ commodity.id }}total >{{ commodity.price }}</td>#}
+                <td></td>
+                <td>
+                    <button><a href="{% url 'shopping:delete' user_pk=user.pk commodity_pk=commodity.pk %}">删 除</a></button>
+                </td>
+            </tr>
+        {% endfor %}
+{#        <tr>#}
+{#            <td>总购买数量</td>#}
+{#            <td>{{zzprice()}}</td>#}
+{#            <td id="totalnumber"></td>#}
+{#            <td></td>#}
+{#            <td>购物车总价</td>#}
+{#            <td>{{totalprice()}} 元</td>#}
+{#            <td id="totalPrice"></td>#}
+{#            <td colspan="2"><button><a href="{% url 'shopping:deleteAll' user_pk=user.pk %}">清空购物车</a></button></td>#}
+{#            <button></button>#}
+{#        </tr>#}
+    </table>
+{#    <button onclick=test1()>提交</button>#}
+    <script>
+        function jia(id, price) {
+            document.getElementById(id).value++;
+            document.getElementById(id + "total").innerHTML = document.getElementById(id).value * price;
+            var myArray = new Array();
+            var arrPrice = new Array();
+            {% for commodity in commodities %}
+                myArray.push(document.getElementById({{ commodity.id }}).value);
+                arrPrice.push(document.getElementById({{ commodity.id }}).value * {{ commodity.price }});
+            {% endfor %}
+            function sumArr(arr) {
+                return eval(arr.join("+"))
+            }
+            document.getElementById("totalnumber").innerHTML = sumArr(myArray);
+            document.getElementById("totalPrice").innerHTML = sumArr(arrPrice);
+         }
+        function jian(id,price) {
+            if (document.getElementById(id).value > 1){
+                document.getElementById(id).value--;
+                document.getElementById(id+"total").innerHTML = document.getElementById(id).value*price;
+                var myArray = new Array();
+                var arrPrice = new Array();
+                {% for commodity in commodities %}
+                    myArray.push(document.getElementById({{ commodity.id }}).value);
+                    arrPrice.push(document.getElementById({{ commodity.id }}).value * {{ commodity.price }});
+                {% endfor %}
+                function sumArr(arr) {
+                    return eval(arr.join("+"))
+                }
+                document.getElementById("totalnumber").innerHTML = sumArr(myArray);
+                document.getElementById("totalPrice").innerHTML = sumArr(arrPrice);
+
+            }
+         }
+    </script>
+    <div>
+        <form action="{% url 'shopping:add' pk=user.pk %}" method="POST" autocomplete="on" class="user_apply">{% csrf_token %}
+            <!--   <form action="<c:url value='/UserServlet'/>" method="post" id="registForm" onclick="infoJumpTo"> -->
+            <h1>添加购物车</h1>
+            <p id="namets">
+                <label for="{{ form.name.id_for_label }}" class="uname">名称</label>
+                <input id="usernamesignup" name="name" required="required" type="text" placeholder="请输入名称"/>
+            </p>
+
+            <p>
+                <label for="{{ form.img.id_for_lable }}" class="youpasswd">图片</label>
+                <input id="passwordsignup" name="img" required="required" type="text" placeholder="请输入图片路径"/>
+                {{ form.password.errors }}
+            </p>
+            <p>
+                <label for="{{ form.price.id_for_lable }}" class="youmail">价格</label>
+                <input id="emailsignup" name="price" required="required" type="text" placeholder="请输入价格"/>
+                {{ form.email.errors }}
+            </p>
+            <p class="signin button">
+                <input type="submit" value="添加"/>
+            </p>
+            <span style="color: red">{{ error_msg }}</span>
+        </form>
+    </div>
+</body>
+</html>
