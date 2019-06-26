@@ -1,0 +1,5 @@
+django==2.2
+python==3.6
+oracle==12c
+cx_Oracle==7.3
+jquery==3.4.1
