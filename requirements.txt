@@ -1,4 +1,4 @@
-django==2.2
+django==2.2.10
 python==3.6
 oracle==12c
 cx_Oracle==7.3
